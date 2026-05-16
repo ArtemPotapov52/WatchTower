@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WatchTower — Monitor Everything</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface2: #1a1a1a;
+  --border: rgba(255,255,255,0.06);
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+  --accent: #fff;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ─── Grid Background ─── */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ─── Particles ─── */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  animation: float linear infinite;
+}
+@keyframes float {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ─── Nav ─── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(10,10,10,0.7);
+  border-bottom: 1px solid var(--border);
+  animation: fadeDown 0.8s ease;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+}
+.nav-logo svg { width: 28px; height: 28px; }
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { width: 100%; }
+.download-btn {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.download-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(255,255,255,0.15);
+}
+
+/* ─── Sections ─── */
+section { position: relative; z-index: 1; }
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ─── Hero ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 80px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s 0.2s both;
+}
+.hero-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.hero h1 {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 1;
+  margin-bottom: 20px;
+  animation: fadeUp 0.8s 0.3s both;
+}
+.hero h1 span {
+  background: linear-gradient(135deg, #fff 0%, #888 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--text2);
+  max-width: 560px;
+  margin-bottom: 40px;
+  animation: fadeUp 0.8s 0.4s both;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  animation: fadeUp 0.8s 0.5s both;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(255,255,255,0.1);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  border-color: var(--text2);
+  transform: translateY(-2px);
+}
+
+/* ─── Hero Eye Animation ─── */
+.hero-eye {
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s 0.1s both;
+}
+.hero-eye svg {
+  width: 64px;
+  height: 64px;
+  animation: eye-pulse 3s ease-in-out infinite;
+}
+@keyframes eye-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Features ─── */
+.features {
+  padding: 120px 0;
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+}
+.section-sub {
+  color: var(--text2);
+  font-size: 16px;
+  max-width: 480px;
+  margin-bottom: 60px;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(40px);
+}
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.feature-card:hover {
+  border-color: rgba(255,255,255,0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.feature-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+.feature-card p {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* ─── Stats / Monitor Mock ─── */
+.mock-section {
+  padding: 80px 0;
+}
+.mock-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mock-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.mock-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mock-dots { display: flex; gap: 6px; }
+.mock-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--text3);
+}
+.mock-dot:nth-child(1) { background: var(--danger); }
+.mock-dot:nth-child(2) { background: var(--warning); }
+.mock-dot:nth-child(3) { background: var(--success); }
+.mock-title {
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.mock-body { padding: 8px; }
+.mock-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+.mock-row:hover { background: var(--surface2); }
+.mock-status {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mock-status.success { background: var(--success); }
+.mock-status.warning { background: var(--warning); }
+.mock-status.danger { background: var(--danger); }
+.mock-row-icon { font-size: 16px; width: 24px; text-align: center; }
+.mock-row-name { font-size: 13px; font-weight: 500; flex: 1; }
+.mock-row-sub { font-size: 11px; color: var(--text3); }
+.mock-row-right { font-size: 11px; color: var(--text2); }
+
+/* ─── Stats Bar ─── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.stat-number {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+/* ─── Process Monitor ─── */
+.process-bar {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.process-bar.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.process-icon { font-size: 20px; }
+.process-info { flex: 1; }
+.process-name { font-size: 13px; font-weight: 600; }
+.process-desc { font-size: 11px; color: var(--text3); }
+.process-mem {
+  font-size: 12px;
+  color: var(--text2);
+  font-family: monospace;
+}
+.process-usage {
+  width: 120px;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.process-usage-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.8s ease;
+}
+
+/* ─── Auto Discovery ─── */
+.discovery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 24px;
+}
+.discovery-item {
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.5s ease;
+}
+.discovery-item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.discovery-item .icon { font-size: 14px; }
+.discovery-item .name { font-weight: 500; flex: 1; }
+.discovery-item .status { font-size: 10px; color: var(--text3); }
+
+/* ─── Footer ─── */
+footer {
+  padding: 60px 0 40px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text3);
+  font-size: 13px;
+}
+footer a {
+  color: var(--text2);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+footer a:hover { color: var(--text); }
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  nav { padding: 12px 20px; }
+  .nav-links { display: none; }
+  .features-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr; }
+  .hero-actions { flex-direction: column; }
+  .hero h1 { font-size: 40px; letter-spacing: -1.5px; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="particles" id="particles"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+    </svg>
+    WatchTower
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#demo">Demo</a>
+    <a href="#discovery">Auto-Discovery</a>
+  </div>
+  <a class="download-btn" href="https://github.com/ArtemPotapov52/WatchTower" target="_blank">GitHub</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Real-time monitoring dashboard
+    </div>
+    <div class="hero-eye">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        <path d="M12 9a3 3 0 100 6 3 3 0 000-6z" fill="currentColor" opacity="0.2"/>
+      </svg>
+    </div>
+    <h1><span>WatchTower</span></h1>
+    <p>
+      Monitor your GitHub, GitLab, Vercel, Netlify, Sentry, Datadog,
+      local git repos, processes — all from your menu bar.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://github.com/ArtemPotapov52/WatchTower/releases">Download</a>
+      <a class="btn-secondary" href="#features">Explore Features</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-label">Platforms</div>
+    <h2 class="section-title">Everything in one place</h2>
+    <p class="section-sub">
+      WatchTower connects to 9+ services and monitors local state.
+    </p>
+    <div class="stats-row">
+      <div class="stat-card" data-delay="0">
+        <div class="stat-number" style="color: var(--success);">9+</div>
+        <div class="stat-label">Services</div>
+      </div>
+      <div class="stat-card" data-delay="150">
+        <div class="stat-number" style="color: var(--warning);">∞</div>
+        <div class="stat-label">Repositories</div>
+      </div>
+      <div class="stat-card" data-delay="300">
+        <div class="stat-number" style="color: var(--accent);">Auto</div>
+        <div class="stat-label">Discovery</div>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" data-delay="0">
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </div>
+        <h3>GitHub</h3>
+        <p>Track repository status, open issues, pull requests, and CI health. Supports unlimited repos per account.</p>
+      </div>
+      <div class="feature-card" data-delay="100">
+        <div class="feature-icon">🦊</div>
+        <h3>GitLab</h3>
+        <p>Monitor GitLab projects, pipelines, and merge requests. Self-hosted or SaaS, with custom base URL support.</p>
+      </div>
+      <div class="feature-card" data-delay="200">
+        <div class="feature-icon">▲</div>
+        <h3>Vercel</h3>
+        <p>Keep an eye on Vercel deployments, preview URLs, and project status. Instant alerts on build failures.</p>
+      </div>
+      <div class="feature-card" data-delay="300">
+        <div class="feature-icon">⊞</div>
+        <h3>Netlify</h3>
+        <p>Monitor Netlify sites, deploy status, and SSL certificates. Know immediately when a build breaks.</p>
+      </div>
+      <div class="feature-card" data-delay="400">
+        <div class="feature-icon">⚠</div>
+        <h3>Sentry</h3>
+        <p>Track error rates, crash reports, and performance issues across your projects. Real-time alerting.</p>
+      </div>
+      <div class="feature-card" data-delay="500">
+        <div class="feature-icon">◆</div>
+        <h3>Datadog</h3>
+        <p>Monitor Datadog monitors, alerts, and key metrics. Supports custom sites and dual-key authentication.</p>
+      </div>
+      <div class="feature-card" data-delay="600">
+        <div class="feature-icon">◎</div>
+        <h3>Uptime</h3>
+        <p>HTTP uptime monitoring for any endpoint. Get alerted when your services go down with status code checks.</p>
+      </div>
+      <div class="feature-card" data-delay="700">
+        <div class="feature-icon">🚂</div>
+        <h3>Railway</h3>
+        <p>Track Railway deployments, project status, and service health. Perfect for monitoring your backend infrastructure.</p>
+      </div>
+      <div class="feature-card" data-delay="800">
+        <div class="feature-icon">📁</div>
+        <h3>Local Git</h3>
+        <p>Auto-discover local git repositories. View branch, dirty state, and recent commits without any configuration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo Mock -->
+<section class="mock-section" id="demo">
+  <div class="container">
+    <div class="section-label">Live Demo</div>
+    <h2 class="section-title">Status at a glance</h2>
+    <p class="section-sub">Each service shows current status, latest activity, and quick actions.</p>
+
+    <div class="stats-row">
+      <div class="stat-card" data-delay="0">
+        <div class="stat-number" style="color: var(--success);" id="stat-ok">0</div>
+        <div class="stat-label">Operational</div>
+      </div>
+      <div class="stat-card" data-delay="150">
+        <div class="stat-number" style="color: var(--warning);" id="stat-warn">0</div>
+        <div class="stat-label">Warning</div>
+      </div>
+      <div class="stat-card" data-delay="300">
+        <div class="stat-number" style="color: var(--danger);" id="stat-danger">0</div>
+        <div class="stat-label">Critical</div>
+      </div>
+    </div>
+
+    <div class="mock-container" id="mockContainer">
+      <div class="mock-header">
+        <div class="mock-dots">
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+        </div>
+        <div class="mock-title">WatchTower · Dashboard</div>
+      </div>
+      <div class="mock-body" id="mockBody">
+        <div class="mock-row">
+          <div class="mock-status success"></div>
+          <div class="mock-row-icon">▲</div>
+          <div class="mock-row-name">Vercel — Production</div>
+          <div class="mock-row-sub">deployed 2m ago</div>
+          <div class="mock-row-right">Ready</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status success"></div>
+          <div class="mock-row-icon"></div>
+          <div class="mock-row-name">GitHub — CI Pipeline</div>
+          <div class="mock-row-sub">main · 3m ago</div>
+          <div class="mock-row-right">Passed</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status warning"></div>
+          <div class="mock-row-icon">🦊</div>
+          <div class="mock-row-name">GitLab — build</div>
+          <div class="mock-row-sub">staging · 8m ago</div>
+          <div class="mock-row-right">Pending</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status danger"></div>
+          <div class="mock-row-icon">◎</div>
+          <div class="mock-row-name">Uptime — API</div>
+          <div class="mock-row-sub">timeout after 5s</div>
+          <div class="mock-row-right">Down</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status success"></div>
+          <div class="mock-row-icon">⊞</div>
+          <div class="mock-row-name">Netlify — landing</div>
+          <div class="mock-row-sub">deploy #42</div>
+          <div class="mock-row-right">Published</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status success"></div>
+          <div class="mock-row-icon">⚠</div>
+          <div class="mock-row-name">Sentry — errors</div>
+          <div class="mock-row-sub">12 events in 24h</div>
+          <div class="mock-row-right">Stable</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status warning"></div>
+          <div class="mock-row-icon">📁</div>
+          <div class="mock-row-name">Local — watchtower</div>
+          <div class="mock-row-sub">main · ● 3 files</div>
+          <div class="mock-row-right">Dirty</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-status success"></div>
+          <div class="mock-row-icon">🚂</div>
+          <div class="mock-row-name">Railway — backend</div>
+          <div class="mock-row-sub">live</div>
+          <div class="mock-row-right">Active</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Process Monitor -->
+    <div class="process-bar" id="processBar">
+      <div class="process-icon">⚙</div>
+      <div class="process-info">
+        <div class="process-name">Process Monitor</div>
+        <div class="process-desc">WatchTower monitors running system processes</div>
+      </div>
+      <div class="process-mem" id="processMem">— MB</div>
+      <div class="process-usage">
+        <div class="process-usage-fill" id="processFill" style="width: 0%;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Auto Discovery -->
+<section class="features" id="discovery">
+  <div class="container">
+    <div class="section-label">No Setup Required</div>
+    <h2 class="section-title">Auto-Discovery</h2>
+    <p class="section-sub">
+      WatchTower automatically finds your local git repositories, analyzes remotes,
+      and configures monitoring — zero configuration.
+    </p>
+    <div class="discovery-grid" id="discoveryGrid">
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>
+      <a href="https://github.com/ArtemPotapov52/WatchTower">WatchTower</a> ·
+      Built with SwiftUI · MIT License
+    </p>
+  </div>
+</footer>
+
+<script>
+// ─── Particles ───
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = (1 + Math.random() * 2) + 'px';
+    p.style.height = p.style.width;
+    p.style.animationDuration = (8 + Math.random() * 20) + 's';
+    p.style.animationDelay = Math.random() * 20 + 's';
+    p.style.opacity = 0.2 + Math.random() * 0.4;
+    container.appendChild(p);
+  }
+})();
+
+// ─── Scroll Animations ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const delay = parseInt(el.dataset.delay) || 0;
+      setTimeout(() => el.classList.add('visible'), delay);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feature-card, .stat-card, .mock-container, .process-bar, .discovery-item').forEach(el => {
+  observer.observe(el);
+});
+
+// ─── Process Monitor Animation ───
+(function() {
+  const processFill = document.getElementById('processFill');
+  const processMem = document.getElementById('processMem');
+  let mem = 42;
+  setInterval(() => {
+    mem = Math.max(12, Math.min(98, mem + (Math.random() - 0.5) * 8));
+    processFill.style.width = mem + '%';
+    processMem.textContent = (mem * 1.8).toFixed(0) + ' MB';
+  }, 2000);
+})();
+
+// ─── Auto Discovery Items ───
+const repos = [
+  { icon: '', name: 'nick-vels/Agent-Teams', status: '~/Downloads' },
+  { icon: '', name: 'ArtemPotapov52/messenger', status: '~/trae_projects' },
+  { icon: '', name: 'gc-ts/mobile', status: '~/mobile' },
+  { icon: '', name: 'gc-ts/backend', status: '~/backend' },
+  { icon: '', name: 'funpaysales/nodefp', status: '~/funpay-manager-node' },
+  { icon: '', name: 'funpaysales/funpay-manager', status: '~/funpay-manager' },
+  { icon: '', name: 'ArtemPotapov52/focus-landing', status: '~/focus-landing' },
+  { icon: '', name: 'ArtemPotapov52/arbitrageFARM', status: '~/Documents/trae_projects' },
+  { icon: '', name: 'ArtemPotapov52/Focus', status: '~/Documents/todoapp' },
+  { icon: '📁', name: 'Alishahryar1/free-claude-code', status: '~/' },
+  { icon: '📁', name: '7836246/gpt-auto-register', status: '~/' },
+  { icon: '⚙', name: 'Process Monitor', status: 'active' },
+];
+const grid = document.getElementById('discoveryGrid');
+repos.forEach((r, i) => {
+  const el = document.createElement('div');
+  el.className = 'discovery-item';
+  el.dataset.delay = i * 80;
+  el.innerHTML = `<span class="icon">${r.icon}</span><span class="name">${r.name}</span><span class="status">${r.status}</span>`;
+  grid.appendChild(el);
+  observer.observe(el);
+});
+
+// ─── Stats Counter ───
+let ok = 5, warn = 2, danger = 1;
+setInterval(() => {
+  const delta = Math.random() > 0.6 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+  if (delta > 0 && ok > 3) { ok--; warn++; }
+  else if (delta < 0 && warn > 0) { warn--; ok++; }
+  else if (Math.random() > 0.8 && danger < 3) { danger++; ok = Math.max(0, ok - 1); }
+  else if (danger > 0 && Math.random() > 0.7) { danger--; ok++; }
+  document.getElementById('stat-ok').textContent = ok;
+  document.getElementById('stat-warn').textContent = warn;
+  document.getElementById('stat-danger').textContent = danger;
+}, 3000);
+</script>
+</body>
+</html>

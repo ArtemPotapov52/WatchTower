@@ -1,21 +1,30 @@
-//
-//  WatchTowerApp.swift
-//  WatchTower
-//
-//  Created by Артем Потапов on 17.05.2026.
-//
-
 import SwiftUI
-import CoreData
 
 @main
 struct WatchTowerApp: App {
-    let persistenceController = PersistenceController.shared
+    @State private var appState = AppState()
+
+    private var colorScheme: ColorScheme? {
+        switch appState.colorSchemePreference {
+        case "light": .light
+        case "dark": .dark
+        default: nil
+        }
+    }
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+        WindowGroup(id: "main") {
+            MainTabView()
+                .environment(appState)
+                .preferredColorScheme(colorScheme)
         }
+        .windowResizability(.contentMinSize)
+        .windowStyle(.hiddenTitleBar)
+
+        MenuBarExtra("WatchTower", systemImage: "eye") {
+            PopupView()
+                .environment(appState)
+        }
+        .menuBarExtraStyle(.window)
     }
 }
